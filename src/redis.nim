@@ -241,7 +241,11 @@ proc readSingleString(
     return
 
   var s = await r.managedRecv(numBytes + 2)
-  result = some(strip(s))
+  if s[^1] in NewLines:
+    s = s[0 ..< ^1]
+  if s[^1] == '\c':
+    s = s[0 ..< ^1]
+  result = some(s)
 
 proc readSingleString(r: Redis | AsyncRedis): Future[RedisString] {.multisync.} =
   # TODO: Rename these style of procedures to `processSingleString`?
